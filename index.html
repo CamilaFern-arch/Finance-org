@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Financial Planner</title>
+    <title>Financial Planner Elite</title>
 
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/money-box.png">
     <link rel="icon" type="image/png" sizes="32x32" href="https://img.icons8.com/fluency/32/money-box.png">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Finanzas">
+    <meta name="apple-mobile-web-app-title" content="Mis Finanzas">
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
@@ -20,318 +20,287 @@
             --gold: #c9a84c;
             --cream: #faf6ef;
             --red: #c0392b;
+            --green: #2ecc71;
             --light-gold: #f0e0b0;
-            --mid: #e8dfc8;
-            --dark-text: #1a2744;
-            --muted: #7a7060;
             --border: #d4c8a8;
-            --star: #c9a84c;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             background: var(--cream);
             font-family: 'Lato', sans-serif;
-            color: var(--dark-text);
-            min-height: 100vh;
+            color: var(--navy);
             padding: 15px;
+            line-height: 1.6;
         }
 
-        /* TOOLBAR */
+        /* TOOLBAR FLOTANTE */
         .toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+            background: rgba(250, 246, 239, 0.9);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
         }
 
         .btn {
             font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 10px 22px;
+            font-size: 10px;
+            padding: 10px 15px;
             border: 2px solid var(--navy);
             background: var(--navy);
-            color: var(--cream);
+            color: white;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 2px;
+            transition: 0.3s;
         }
-        .btn:hover { background: var(--gold); border-color: var(--gold); color: var(--navy); }
-        .btn.secondary { background: transparent; color: var(--navy); }
-        .btn.secondary:hover { background: var(--navy); color: var(--cream); }
+        .btn:active { transform: scale(0.95); }
+        .btn.secondary { background: white; color: var(--navy); }
 
-        /* PAGE CONTAINER */
+        /* CARDS */
         .page {
             background: white;
-            width: 100%;
             max-width: 860px;
-            margin: 0 auto 40px;
-            box-shadow: 0 4px 40px rgba(26,39,68,0.15);
-            position: relative;
+            margin: 0 auto 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(26,39,68,0.1);
             overflow: hidden;
+            border: 1px solid var(--border);
         }
 
-        .stripe-top {
-            height: 10px;
-            background: repeating-linear-gradient(90deg, var(--navy) 0px, var(--navy) 60px, var(--red) 60px, var(--red) 120px, var(--navy) 120px, var(--navy) 180px);
-        }
-        .stripe-bottom { height: 6px; background: var(--gold); }
+        .stripe-top { height: 12px; background: linear-gradient(90deg, var(--navy), var(--gold), var(--red), var(--navy)); }
 
-        /* HEADER CORREGIDO PARA MÓVIL */
+        /* HEADER REDISEÑADO */
         .page-header {
-            padding: 30px 40px 20px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fff 60%, var(--light-gold) 100%);
             border-bottom: 2px solid var(--border);
-            position: relative;
-            background: linear-gradient(135deg, #fff 70%, var(--light-gold) 100%);
-            display: flex;
-            flex-direction: column;
         }
 
-        @media (min-width: 700px) {
-            .page-header { flex-direction: row; justify-content: space-between; align-items: flex-start; }
-        }
-
-        .header-stars { display: flex; gap: 6px; margin-bottom: 10px; }
-        .star { color: var(--star); font-size: 14px; }
-
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 38px;
-            font-weight: 900;
-            color: var(--navy);
-            line-height: 1;
-        }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 34px; line-height: 1; }
         .page-title span { color: var(--gold); }
+        .page-subtitle { font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
 
-        .header-right { margin-top: 15px; }
-        @media (min-width: 700px) { .header-right { margin-top: 0; text-align: right; } }
-
-        .week-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
-        .week-input {
+        .date-container { margin-top: 15px; }
+        .date-input {
             font-family: 'Playfair Display', serif;
             font-size: 22px;
-            font-weight: 700;
             color: var(--navy);
             border: none;
             border-bottom: 2px solid var(--gold);
             background: transparent;
-            width: 180px;
             outline: none;
+            width: 100%;
         }
 
-        /* BODY & SECTIONS */
-        .page-body { padding: 28px 40px 30px; }
-        .section-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--navy); border-left: 4px solid var(--gold); padding-left: 10px; margin-bottom: 14px; margin-top: 24px; }
+        .page-body { padding: 25px; }
 
-        .month-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 4px; }
-        .overview-card { background: var(--cream); border: 1.5px solid var(--border); padding: 14px 16px; border-radius: 3px; position: relative; border-left: 4px solid var(--gold); }
-        .card-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
-        .card-value { display: flex; align-items: center; gap: 4px; }
-        .dollar-sign { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--muted); }
-        .card-input { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--navy); border: none; background: transparent; width: 100%; outline: none; border-bottom: 1.5px dashed var(--border); }
+        /* INTERACTIVIDAD EN OVERVIEW */
+        .month-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .card {
+            padding: 20px;
+            border-radius: 8px;
+            background: var(--cream);
+            border-left: 5px solid var(--navy);
+            transition: 0.3s;
+        }
+        .card:focus-within { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .card.income { border-left-color: var(--green); }
+        .card.expense { border-left-color: var(--red); }
+        .card.joy { border-left-color: var(--gold); } /* El fondo de placeres */
 
-        .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .label { font-family: 'DM Mono', monospace; font-size: 10px; opacity: 0.7; }
+        .value-group { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
+        .currency { font-family: 'Playfair Display'; font-size: 20px; font-weight: 900; }
+        .input-main { font-family: 'Playfair Display'; font-size: 28px; font-weight: 900; width: 100%; border: none; background: transparent; outline: none; color: var(--navy); }
 
-        .budget-table { width: 100%; border-collapse: collapse; }
-        .budget-table th { font-family: 'DM Mono', monospace; font-size: 8.5px; text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--navy); padding: 6px 0; text-align: left; }
-        .budget-table td { border-bottom: 1px solid var(--mid); padding: 5px 0; }
-        .budget-table input { font-size: 13px; border: none; background: transparent; outline: none; width: 100%; }
-        .amount { text-align: right; font-family: 'DM Mono', monospace; }
+        /* SECCIONES DINÁMICAS */
+        .section-title { 
+            font-family: 'DM Mono', monospace; 
+            font-size: 12px; 
+            margin: 30px 0 15px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* PROGRESS BARS */
-        .progress-item { margin-bottom: 12px; }
-        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-        .progress-track { height: 8px; background: var(--mid); border-radius: 99px; overflow: hidden; cursor: pointer; }
-        .progress-fill { height: 100%; transition: width 0.3s ease; background: var(--gold); }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 
-        /* WEEKLY GRID */
-        .week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }
-        .day-card { border: 1.5px solid var(--border); border-radius: 3px; overflow: hidden; }
-        .day-header { background: var(--navy); color: var(--cream); font-family: 'DM Mono', monospace; font-size: 9px; text-align: center; padding: 5px; }
-        .day-body { padding: 6px; min-height: 80px; background: white; }
-        .day-item { display: flex; border-bottom: 1px dashed var(--mid); margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 10px 0; border-bottom: 1px solid #eee; }
+        td input { border: none; outline: none; font-size: 14px; width: 100%; background: transparent; }
+        .amt { text-align: right; font-family: 'DM Mono'; font-weight: 600; }
 
-        /* HABIT TRACKER */
-        .habit-grid { display: grid; grid-template-columns: 140px repeat(7, 1fr); border: 1.5px solid var(--border); }
-        .hg-header { background: var(--navy); color: var(--cream); font-size: 8px; text-align: center; padding: 5px; border-right: 1px solid #333; }
-        .hg-cell { background: white; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); height: 35px; display: flex; align-items: center; justify-content: center; }
-        .habit-check { width: 18px; height: 18px; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; }
-        .habit-check.checked { background: var(--gold); color: white; border-color: var(--gold); }
+        /* BARRAS DE PROGRESO */
+        .progress-wrapper { margin-bottom: 20px; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; font-weight: 700; }
+        .bar-outer { height: 10px; background: #eee; border-radius: 10px; overflow: hidden; }
+        .bar-inner { height: 100%; background: var(--navy); width: 0%; transition: 1s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
 
-        .notes-area { width: 100%; height: 90px; border: 1.5px solid var(--border); background: var(--cream); padding: 10px; font-family: inherit; resize: none; outline: none; }
+        /* HABITS MÓVIL OPTIMIZADO */
+        .habit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--cream); border-radius: 8px; margin-bottom: 8px; }
+        .check-group { display: flex; gap: 5px; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; }
+        .dot.active { background: var(--gold); border-color: var(--gold); }
 
-        @media print { .no-print { display: none; } .page { box-shadow: none; margin: 0; } }
+        .notes { width: 100%; height: 100px; border: 2px solid var(--border); border-radius: 8px; padding: 15px; font-family: inherit; outline: none; transition: 0.3s; }
+        .notes:focus { border-color: var(--gold); }
+
+        @media print { .toolbar { display: none; } }
     </style>
 </head>
 <body>
 
 <div class="toolbar no-print">
-    <button class="btn" onclick="saveData()">💾 Save App</button>
-    <button class="btn secondary" onclick="loadData()">📂 Load</button>
-    <button class="btn secondary" onclick="window.print()">🖨 Print</button>
-    <button class="btn secondary" onclick="clearAll()">↺ Clear</button>
+    <button class="btn" onclick="saveData()">💾 GUARDAR</button>
+    <button class="btn secondary" onclick="window.print()">🖨 IMPRIMIR</button>
+    <button class="btn secondary" onclick="clearAll()">↺ REINICIAR</button>
 </div>
 
-<div class="page" id="page1">
+<div class="page">
     <div class="stripe-top"></div>
     <div class="page-header">
-        <div>
-            <div class="header-stars">
-                <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                <span class="star" style="color:var(--red)">★</span>
-                <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-            </div>
-            <div class="page-title">Financial <span>Planner</span></div>
-            <div class="page-subtitle">Monthly Budget · Income · Goals</div>
-        </div>
-        <div class="header-right">
-            <div class="week-label">Month / Year</div>
-            <input class="week-input" type="text" placeholder="January 2026" id="monthYear">
+        <div class="page-title">Wealth & <span>Whims</span></div>
+        <div class="page-subtitle">Organizado para ganar, libre para disfrutar</div>
+        <div class="date-container">
+            <input type="text" class="date-input" placeholder="¿Qué mes conquistamos hoy?" id="mes">
         </div>
     </div>
 
     <div class="page-body">
-        <div class="section-title">Monthly Overview</div>
         <div class="month-overview">
-            <div class="overview-card" style="border-left-color: #2ecc71;">
-                <div class="card-label">💰 Total Income</div>
-                <div class="card-value"><span class="dollar-sign">$</span><input class="card-input" type="number" id="totalIncome" oninput="updateSavings()"></div>
+            <div class="card income">
+                <div class="label">💰 ENTRADAS (Hustle)</div>
+                <div class="value-group">
+                    <span class="currency">$</span>
+                    <input type="number" class="input-main" id="inc" placeholder="0" oninput="calc()">
+                </div>
             </div>
-            <div class="overview-card" style="border-left-color: var(--red);">
-                <div class="card-label">💸 Total Expenses</div>
-                <div class="card-value"><span class="dollar-sign">$</span><input class="card-input" type="number" id="totalExpenses" oninput="updateSavings()"></div>
+            <div class="card expense">
+                <div class="label">📉 SALIDAS (Responsabilidades)</div>
+                <div class="value-group">
+                    <span class="currency">$</span>
+                    <input type="number" class="input-main" id="exp" placeholder="0" oninput="calc()">
+                </div>
             </div>
-            <div class="overview-card">
-                <div class="card-label">🏦 Net Savings</div>
-                <div class="card-value"><span class="dollar-sign">$</span><input class="card-input" type="text" id="netSavings" readonly value="0.00" style="color:var(--gold)"></div>
+            <div class="card joy">
+                <div class="label">🥂 GUANTE BLANCO (Para mis gustos)</div>
+                <div class="value-group">
+                    <span class="currency">$</span>
+                    <input type="text" class="input-main" id="joy" readonly value="0">
+                </div>
             </div>
         </div>
 
-        <div class="two-col">
+        <div class="grid-2">
             <div>
-                <div class="section-title">Income Sources</div>
-                <table class="budget-table">
-                    <thead><tr><th>Source</th><th style="text-align:right">Amount</th></tr></thead>
-                    <tbody>
-                        <tr><td><input type="text" placeholder="Primary Job"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
-                        <tr><td><input type="text" placeholder="Side Hustle"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
-                        <tr><td><input type="text" placeholder="Investments"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
-                    </tbody>
+                <div class="section-title">DETALLE DE OPERACIONES</div>
+                <table>
+                    <tr><td><input type="text" placeholder="🏠 Alquiler / Hipoteca"></td><td><input type="number" class="amt" placeholder="0"></td></tr>
+                    <tr><td><input type="text" placeholder="🍱 Restaurantes Top"></td><td><input type="number" class="amt" placeholder="0"></td></tr>
+                    <tr><td><input type="text" placeholder="🚗 Gasolina / Uber"></td><td><input type="number" class="amt" placeholder="0"></td></tr>
+                    <tr><td><input type="text" placeholder="🛍 Capricho del mes"></td><td><input type="number" class="amt" placeholder="0"></td></tr>
+                    <tr><td><input type="text" placeholder="💳 Suscripciones"></td><td><input type="number" class="amt" placeholder="0"></td></tr>
                 </table>
             </div>
+
             <div>
-                <div class="section-title">Fixed Expenses</div>
-                <table class="budget-table">
-                    <thead><tr><th>Category</th><th style="text-align:right">Amount</th></tr></thead>
-                    <tbody>
-                        <tr><td><input type="text" placeholder="Rent / Mortgage"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
-                        <tr><td><input type="text" placeholder="Utilities"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
-                        <tr><td><input type="text" placeholder="Groceries"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
-                    </tbody>
-                </table>
+                <div class="section-title">MISIÓN: LIBERTAD</div>
+                <div class="progress-wrapper">
+                    <div class="progress-info"><span>✈️ Viaje Soñado</span><span id="p1text">0%</span></div>
+                    <input type="number" id="v1" placeholder="Ahorrado" style="width:45%" oninput="updateBar(1, 5000)">
+                    <div class="bar-outer"><div class="bar-inner" id="b1"></div></div>
+                </div>
+                <div class="progress-wrapper">
+                    <div class="progress-info"><span>💍 Fondo de Lujo</span><span id="p2text">0%</span></div>
+                    <input type="number" id="v2" placeholder="Ahorrado" style="width:45%" oninput="updateBar(2, 2000)">
+                    <div class="bar-outer"><div class="bar-inner" id="b2" style="background:var(--gold)"></div></div>
+                </div>
             </div>
         </div>
 
-        <div class="section-title">Savings Goals</div>
-        <div class="two-col">
-            <div class="progress-item">
-                <div class="progress-header"><span>Emergency Fund</span> <span><input type="number" id="p1s" style="width:50px; border:none; background:transparent; text-align:right" oninput="updateAllProgress()"> / 5000</span></div>
-                <div class="progress-track"><div class="progress-fill" id="pf1" style="width:0%"></div></div>
+        <div class="section-title">DISCIPLINA DE ÉXITO (Esta semana)</div>
+        <div id="habitList">
+            <div class="habit-row">
+                <span>☕ Café en casa (No Starbucks hoy)</span>
+                <div class="check-group">
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                </div>
             </div>
-            <div class="progress-item">
-                <div class="progress-header"><span>Vacation Fund</span> <span><input type="number" id="p2s" style="width:50px; border:none; background:transparent; text-align:right" oninput="updateAllProgress()"> / 2000</span></div>
-                <div class="progress-track"><div class="progress-fill" id="pf2" style="width:0%; background:var(--navy)"></div></div>
+            <div class="habit-row">
+                <span>📈 Revisé mis inversiones</span>
+                <div class="check-group">
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                    <div class="dot" onclick="this.classList.toggle('active')"></div>
+                </div>
             </div>
         </div>
 
-        <div class="section-title">Monthly Notes</div>
-        <textarea class="notes-area" placeholder="What are your goals this month?"></textarea>
-    </div>
-    <div class="stripe-bottom"></div>
-</div>
-
-<div class="page" id="page2">
-    <div class="stripe-top"></div>
-    <div class="page-body">
-        <div class="section-title">Weekly Tracker</div>
-        <div class="week-grid">
-            <script>
-                ['MON','TUE','WED','THU','FRI','SAT','SUN'].forEach(d => {
-                    document.write(`
-                        <div class="day-card">
-                            <div class="day-header">${d}</div>
-                            <div class="day-body">
-                                <div class="day-item"><input type="text" placeholder="..."></div>
-                                <div class="day-item"><input type="text" placeholder="..."></div>
-                                <div class="day-item"><input type="text" placeholder="..."></div>
-                            </div>
-                        </div>
-                    `);
-                });
-            </script>
-        </div>
-
-        <div class="section-title">Financial Habits</div>
-        <div class="habit-grid">
-            <div class="hg-header">Habit</div>
-            <script>['M','T','W','T','F','S','S'].forEach(d => document.write(`<div class="hg-header">${d}</div>`));</script>
-            <script>
-                ['No Spend Day', 'Checked Budget', 'Saved $'].forEach((h, i) => {
-                    document.write(`<div class="hg-cell" style="justify-content:flex-start; padding-left:10px; font-size:10px;">${h}</div>`);
-                    for(let j=0; j<7; j++) document.write(`<div class="hg-cell"><div class="habit-check" onclick="toggleCheck(this)"></div></div>`);
-                });
-            </script>
-        </div>
+        <div class="section-title">MENTALIDAD DE RIQUEZA</div>
+        <textarea class="notes" placeholder="¿Qué me voy a comprar cuando logre mi meta de ahorro? Escríbelo aquí para no olvidar por qué estás esforzándote hoy..."></textarea>
     </div>
     <div class="stripe-bottom"></div>
 </div>
 
 <script>
-    function updateSavings() {
-        const inc = parseFloat(document.getElementById('totalIncome').value) || 0;
-        const exp = parseFloat(document.getElementById('totalExpenses').value) || 0;
-        const sav = inc - exp;
-        const el = document.getElementById('netSavings');
-        el.value = sav.toFixed(2);
-        el.style.color = sav >= 0 ? 'var(--gold)' : 'var(--red)';
+    // LÓGICA DE CÁLCULO
+    function calc() {
+        const i = parseFloat(document.getElementById('inc').value) || 0;
+        const e = parseFloat(document.getElementById('exp').value) || 0;
+        const joy = i - e;
+        const joyField = document.getElementById('joy');
+        joyField.value = joy.toLocaleString('en-US', {minimumFractionDigits: 2});
+        
+        if(joy < 0) joyField.style.color = 'var(--red)';
+        else joyField.style.color = 'var(--gold)';
     }
 
-    function updateAllProgress() {
-        const s1 = parseFloat(document.getElementById('p1s').value) || 0;
-        document.getElementById('pf1').style.width = Math.min(100, (s1/5000)*100) + '%';
-        const s2 = parseFloat(document.getElementById('p2s').value) || 0;
-        document.getElementById('pf2').style.width = Math.min(100, (s2/2000)*100) + '%';
+    // BARRAS INTERACTIVAS
+    function updateBar(id, goal) {
+        const val = parseFloat(document.getElementById('v' + id).value) || 0;
+        const pct = Math.min(100, Math.round((val / goal) * 100));
+        document.getElementById('b' + id).style.width = pct + '%';
+        document.getElementById('p' + id + 'text').innerText = pct + '%';
     }
 
-    function toggleCheck(el) {
-        el.classList.toggle('checked');
-        el.textContent = el.classList.contains('checked') ? '✓' : '';
-    }
-
+    // PERSISTENCIA DE DATOS
     function saveData() {
         const data = {};
-        document.querySelectorAll('input, textarea').forEach((el, i) => data['v'+i] = el.value);
-        document.querySelectorAll('.habit-check').forEach((el, i) => data['c'+i] = el.classList.contains('checked'));
-        localStorage.setItem('finance_app_v3', JSON.stringify(data));
-        alert('Data saved to your device! 💾');
+        document.querySelectorAll('input, textarea').forEach((el, i) => data['f'+i] = el.value);
+        document.querySelectorAll('.dot').forEach((el, i) => data['d'+i] = el.classList.contains('active'));
+        localStorage.setItem('elite_finance_data', JSON.stringify(data));
+        alert('Tus planes están a salvo. ¡A por ello! 🥂');
     }
 
     function loadData() {
-        const data = JSON.parse(localStorage.getItem('finance_app_v3') || '{}');
-        document.querySelectorAll('input, textarea').forEach((el, i) => { if(data['v'+i] !== undefined) el.value = data['v'+i]; });
-        document.querySelectorAll('.habit-check').forEach((el, i) => {
-            if(data['c'+i]) { el.classList.add('checked'); el.textContent = '✓'; }
-        });
-        updateSavings(); updateAllProgress();
+        const data = JSON.parse(localStorage.getItem('elite_finance_data') || '{}');
+        document.querySelectorAll('input, textarea').forEach((el, i) => { if(data['f'+i]) el.value = data['f'+i]; });
+        document.querySelectorAll('.dot').forEach((el, i) => { if(data['d'+i]) el.classList.add('active'); });
+        calc(); updateBar(1, 5000); updateBar(2, 2000);
     }
 
-    function clearAll() { if(confirm('Clear all data?')) { localStorage.clear(); location.reload(); } }
+    function clearAll() {
+        if(confirm('¿Quieres borrar todo y empezar de cero?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
 
     window.onload = loadData;
 </script>
+
 </body>
 </html>
