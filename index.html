@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Financial Planner</title>
+
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/money-box.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://img.icons8.com/fluency/32/money-box.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://img.icons8.com/fluency/16/money-box.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Finanzas">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy: #1a2744;
+            --gold: #c9a84c;
+            --cream: #faf6ef;
+            --red: #c0392b;
+            --light-gold: #f0e0b0;
+            --mid: #e8dfc8;
+            --dark-text: #1a2744;
+            --muted: #7a7060;
+            --border: #d4c8a8;
+            --star: #c9a84c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--cream);
+            font-family: 'Lato', sans-serif;
+            color: var(--dark-text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body { padding: 0; background: white; }
+            .page { box-shadow: none; margin: 0; page-break-after: always; }
+            .no-print { display: none; }
+            textarea { border: 1px solid #ccc !important; }
+            input { border-bottom: 1px solid #ccc !important; }
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 10px 22px;
+            border: 2px solid var(--navy);
+            background: var(--navy);
+            color: var(--cream);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 2px;
+        }
+        .btn:hover { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+        .btn.secondary { background: transparent; color: var(--navy); }
+        .btn.secondary:hover { background: var(--navy); color: var(--cream); }
+
+        /* PAGE CONTAINER */
+        .page {
+            background: white;
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto 40px;
+            box-shadow: 0 4px 40px rgba(26,39,68,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* TOP STRIPE */
+        .stripe-top {
+            height: 10px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--navy) 0px, var(--navy) 60px,
+                var(--red) 60px, var(--red) 120px,
+                var(--navy) 120px, var(--navy) 180px
+            );
+        }
+        .stripe-bottom {
+            height: 6px;
+            background: var(--gold);
+        }
+
+        /* HEADER */
+        .page-header {
+            padding: 30px 40px 20px;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+            background: linear-gradient(135deg, #fff 70%, var(--light-gold) 100%);
+        }
+
+        .header-stars {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .star { color: var(--star); font-size: 14px; }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--navy);
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        .page-title span { color: var(--gold); }
+
+        .page-subtitle {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        .header-right {
+            position: absolute;
+            right: 40px;
+            top: 30px;
+            text-align: right;
+        }
+
+        .week-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .week-input {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--navy);
+            border: none;
+            border-bottom: 2px solid var(--gold);
+            background: transparent;
+            width: 180px;
+            text-align: right;
+            outline: none;
+            padding: 2px 4px;
+        }
+
+        /* BODY */
+        .page-body {
+            padding: 28px 40px 30px;
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--navy);
+            border-left: 4px solid var(--gold);
+            padding-left: 10px;
+            margin-bottom: 14px;
+            margin-top: 24px;
+        }
+
+        /* MONTHLY OVERVIEW */
+        .month-overview {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 4px;
+        }
+
+        .overview-card {
+            background: var(--cream);
+            border: 1.5px solid var(--border);
+            padding: 14px 16px;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            border-radius: 3px 0 0 3px;
+        }
+        .overview-card.income::before { background: #2ecc71; }
+        .overview-card.expenses::before { background: var(--red); }
+        .overview-card.savings::before { background: var(--gold); }
+
+        .card-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .card-value {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dollar-sign {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--muted);
+            align-self: flex-start;
+            margin-top: 3px;
+        }
+
+        .card-input {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--navy);
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            border-bottom: 1.5px dashed var(--border);
+            padding: 0 2px;
+        }
+        .card-input::placeholder { color: #ccc; }
+
+        /* TWO COLUMN LAYOUT */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* BUDGET TABLE */
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .budget-table th {
+            font-family: 'DM Mono', monospace;
+            font-size: 8.5px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 1.5px solid var(--navy);
+            padding: 6px 6px 6px 0;
+            text-align: left;
+        }
+
+        .budget-table th:last-child { text-align: right; }
+
+        .budget-table td {
+            border-bottom: 1px solid var(--mid);
+            padding: 0;
+            vertical-align: middle;
+        }
+
+        .budget-table td input {
+            font-family: 'Lato', sans-serif;
+            font-size: 13px;
+            color: var(--dark-text);
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            padding: 7px 4px 7px 0;
+        }
+        .budget-table td input::placeholder { color: #ccc; font-style: italic; }
+        .budget-table td input.amount {
+            text-align: right;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+        }
+
+        /* PROGRESS BAR */
+        .progress-item { margin-bottom: 12px; }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .progress-label-input {
+            font-family: 'Lato', sans-serif;
+            font-size: 12px;
+            color: var(--dark-text);
+            border: none;
+            background: transparent;
+            outline: none;
+            border-bottom: 1px dashed var(--border);
+            width: 120px;
+            font-weight: 700;
+        }
+
+        .progress-amounts {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .progress-amounts input {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            border: none;
+            background: transparent;
+            outline: none;
+            border-bottom: 1px dashed var(--border);
+            width: 52px;
+            text-align: right;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: var(--mid);
+            border-radius: 99px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.3s ease;
+        }
+        .fill-gold { background: linear-gradient(90deg, var(--gold), #e8c26a); }
+        .fill-navy { background: linear-gradient(90deg, var(--navy), #2a3d6e); }
+        .fill-green { background: linear-gradient(90deg, #27ae60, #52c17a); }
+        .fill-red { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+
+        /* NOTES */
+        .notes-area {
+            width: 100%;
+            height: 90px;
+            border: 1.5px solid var(--border);
+            border-radius: 3px;
+            padding: 10px 12px;
+            font-family: 'Lato', sans-serif;
+            font-size: 13px;
+            color: var(--dark-text);
+            background: var(--cream);
+            resize: none;
+            outline: none;
+            line-height: 1.8;
+        }
+
+        /* QUOTE */
+        .quote-box {
+            border-top: 2px solid var(--mid);
+            margin-top: 22px;
+            padding-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .quote-mark {
+            font-family: 'Playfair Display', serif;
+            font-size: 60px;
+            color: var(--gold);
+            line-height: 0.7;
+            flex-shrink: 0;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-top: 4px;
+        }
+
+        /* WEEKLY TRACKER */
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .day-card { border: 1.5px solid var(--border); border-radius: 3px; overflow: hidden; }
+        .day-header { background: var(--navy); color: var(--cream); font-family: 'DM Mono', monospace; font-size: 8px; text-align: center; padding: 5px 4px; }
+        .day-body { padding: 6px 5px; background: #fff; min-height: 90px; }
+        .day-item { display: flex; align-items: center; gap: 3px; border-bottom: 1px dashed var(--mid); padding: 2px 0; }
+        .day-item input { font-size: 10px; border: none; background: transparent; outline: none; width: 100%; }
+        .day-item input.mini-amount { text-align: right; width: 36px; color: var(--red); }
+
+        /* HABIT TRACKER */
+        .habit-grid { display: grid; grid-template-columns: 140px repeat(7, 1fr); border: 1.5px solid var(--border); border-radius: 3px; overflow: hidden; }
+        .hg-header { background: var(--navy); color: var(--cream); font-family: 'DM Mono', monospace; font-size: 8px; text-align: center; padding: 7px 4px; border-right: 1px solid rgba(255,255,255,0.15); }
+        .hg-cell { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: center; min-height: 34px; }
+        .hg-cell input { font-size: 11px; border: none; background: transparent; outline: none; width: 100%; padding: 0 8px; }
+        .habit-check { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .habit-check.checked { background: var(--gold); border-color: var(--gold); color: white; }
+
+        .total-row { display: flex; justify-content: space-between; align-items: center; background: var(--navy); color: var(--cream); padding: 8px 12px; border-radius: 3px; margin-top: 8px; }
+        .total-row .total-num { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); }
+
+        .reflection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .reflection-card { border: 1.5px solid var(--border); border-radius: 3px; }
+        .reflection-card-header { background: var(--cream); padding: 7px 12px; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--navy); border-bottom: 1.5px solid var(--border); }
+        .reflection-card textarea { width: 100%; height: 75px; border: none; padding: 10px; font-size: 12px; outline: none; resize: none; }
+
+        .ornament { text-align: center; color: var(--gold); font-size: 14px; letter-spacing: 8px; margin: 18px 0 6px; }
+
+        @media (max-width: 700px) {
+            .page-body { padding: 20px 18px; }
+            .two-col, .month-overview, .reflection-grid { grid-template-columns: 1fr; }
+            .week-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+    <button class="btn" onclick="window.print()">🖨 Print Planner</button>
+    <button class="btn secondary" onclick="clearAll()">↺ Clear All</button>
+    <button class="btn secondary" onclick="saveData()">💾 Save</button>
+    <button class="btn secondary" onclick="loadData()">📂 Load</button>
+</div>
+
+<div class="page" id="page1">
+    <div class="stripe-top"></div>
+    <div class="page-header">
+        <div class="header-stars"><span>★</span><span>★</span><span>★</span><span style="color:var(--red)">★</span><span>★</span><span>★</span><span>★</span></div>
+        <div class="page-title">Financial <span>Planner</span></div>
+        <div class="page-subtitle">Monthly Budget · Income · Goals</div>
+        <div class="header-right">
+            <div class="week-label">Month / Year</div>
+            <input class="week-input" type="text" placeholder="January 2026" id="monthYear">
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="section-title">Monthly Overview</div>
+        <div class="month-overview">
+            <div class="overview-card income">
+                <div class="card-label">💰 Total Income</div>
+                <div class="card-value"><span class="dollar-sign">$</span><input class="card-input" type="number" id="totalIncome" oninput="updateSavings()"></div>
+            </div>
+            <div class="overview-card expenses">
+                <div class="card-label">💸 Total Expenses</div>
+                <div class="card-value"><span class="dollar-sign">$</span><input class="card-input" type="number" id="totalExpenses" oninput="updateSavings()"></div>
+            </div>
+            <div class="overview-card savings">
+                <div class="card-label">🏦 Net Savings</div>
+                <div class="card-value"><span class="dollar-sign">$</span><input class="card-input" type="number" id="netSavings" readonly></div>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <div class="section-title">Income Sources</div>
+                <table class="budget-table">
+                    <tbody>
+                        <tr><td><input type="text" placeholder="Primary Job"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
+                        <tr><td><input type="text" placeholder="Side Hustle"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
+                        <tr><td><input type="text" placeholder="Other"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">Fixed Expenses</div>
+                <table class="budget-table">
+                    <tbody>
+                        <tr><td><input type="text" placeholder="Rent/Mortgage"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
+                        <tr><td><input type="text" placeholder="Utilities"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
+                        <tr><td><input type="text" placeholder="Food"></td><td><input class="amount" type="number" placeholder="0.00"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-title">Savings Goals</div>
+        <div class="two-col">
+            <div class="progress-item">
+                <div class="progress-header"><input class="progress-label-input" value="Emergency Fund"> <div class="progress-amounts"><input type="number" id="p1s"> / <input type="number" id="p1g" value="5000"></div></div>
+                <div class="progress-track" onclick="adjustProgress(this, 'p1s', 'p1g', 'pf1')"><div class="progress-fill fill-gold" id="pf1" style="width:0%"></div></div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-header"><input class="progress-label-input" value="Vacation"> <div class="progress-amounts"><input type="number" id="p2s"> / <input type="number" id="p2g" value="2000"></div></div>
+                <div class="progress-track" onclick="adjustProgress(this, 'p2s', 'p2g', 'pf2')"><div class="progress-fill fill-navy" id="pf2" style="width:0%"></div></div>
+            </div>
+        </div>
+
+        <textarea class="notes-area" placeholder="Monthly Intentions..."></textarea>
+    </div>
+    <div class="stripe-bottom"></div>
+</div>
+
+<div class="page" id="page2">
+    <div class="stripe-top"></div>
+    <div class="page-header">
+        <div class="page-title">Weekly <span>Tracker</span></div>
+        <div class="page-subtitle">Spending · Habits</div>
+    </div>
+    <div class="page-body">
+        <div class="section-title">Daily Spending</div>
+        <div class="week-grid" id="weekGrid">
+            <script>
+                ['MON','TUE','WED','THU','FRI','SAT','SUN'].forEach(d => {
+                    document.write(`<div class="day-card"><div class="day-header">${d}</div><div class="day-body"><div class="day-item"><input type="text"><input class="mini-amount" type="text" placeholder="$0"></div><div class="day-item"><input type="text"><input class="mini-amount" type="text" placeholder="$0"></div></div></div>`);
+                });
+            </script>
+        </div>
+
+        <div class="section-title">Financial Habits</div>
+        <div class="habit-grid">
+            <div class="hg-header">Habit</div>
+            <script>['M','T','W','T','F','S','S'].forEach(d => document.write(`<div class="hg-header">${d}</div>`));</script>
+            <script>
+                ['No Spend Day', 'Tracked Expenses', 'Saved $'].forEach((h, i) => {
+                    document.write(`<div class="hg-cell"><input type="text" value="${h}"></div>`);
+                    for(let j=0; j<7; j++) document.write(`<div class="hg-cell"><div class="habit-check" onclick="toggleCheck(this)"></div></div>`);
+                });
+            </script>
+        </div>
+
+        <div class="section-title">Reflection</div>
+        <div class="reflection-grid">
+            <div class="reflection-card"><div class="reflection-card-header">Wins</div><textarea></textarea></div>
+            <div class="reflection-card"><div class="reflection-card-header">Improve</div><textarea></textarea></div>
+        </div>
+    </div>
+    <div class="stripe-bottom"></div>
+</div>
+
+<script>
+    function updateSavings() {
+        const inc = parseFloat(document.getElementById('totalIncome').value) || 0;
+        const exp = parseFloat(document.getElementById('totalExpenses').value) || 0;
+        const sav = inc - exp;
+        const el = document.getElementById('netSavings');
+        el.value = sav.toFixed(2);
+        el.style.color = sav >= 0 ? 'var(--gold)' : 'var(--red)';
+    }
+
+    function updateAllProgress() {
+        [['p1s','p1g','pf1'],['p2s','p2g','pf2']].forEach(([s,g,f]) => {
+            const val = parseFloat(document.getElementById(s).value) || 0;
+            const goal = parseFloat(document.getElementById(g).value) || 1;
+            document.getElementById(f).style.width = Math.min(100, (val/goal)*100) + '%';
+        });
+    }
+
+    function toggleCheck(el) {
+        el.classList.toggle('checked');
+        el.textContent = el.classList.contains('checked') ? '✓' : '';
+    }
+
+    function saveData() {
+        const data = {};
+        document.querySelectorAll('input, textarea').forEach((el, i) => data['v'+i] = el.value);
+        document.querySelectorAll('.habit-check').forEach((el, i) => data['c'+i] = el.classList.contains('checked'));
+        localStorage.setItem('finance_data', JSON.stringify(data));
+        alert('Saved locally! 💾');
+    }
+
+    function loadData() {
+        const data = JSON.parse(localStorage.getItem('finance_data') || '{}');
+        document.querySelectorAll('input, textarea').forEach((el, i) => { if(data['v'+i] !== undefined) el.value = data['v'+i]; });
+        document.querySelectorAll('.habit-check').forEach((el, i) => {
+            if(data['c'+i]) { el.classList.add('checked'); el.textContent = '✓'; }
+        });
+        updateSavings(); updateAllProgress();
+    }
+
+    window.onload = loadData;
+</script>
+
+</body>
+</html>
